@@ -1,0 +1,51 @@
+<html>
+<head>
+	<title>HELLO WORLD!!</title>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+<body>
+
+	<h1>Hi, I'm <font color="red">high</font></h1>
+
+	<form action="/welcome" method="POST">
+		<input type="text" name="name" placeholder="Enter your name here..."/>
+		<input type="submit" value="Submit"/>
+	</form>
+
+	<%= Date.today%>
+
+	<div class="myStyle">
+		Hello
+	</div>
+
+	<% if Date.today.monday? %>
+	cruel
+	<%end%>
+
+	World!!
+
+   	<form action="/file_uploader" method="POST" enctype="multipart/form-data">
+   		<p>
+   			<label>enter a filename</label>
+   			<input type="file" name="photo"/>
+		</p>
+		<p>
+	   		<input type="submit" value="Upload">
+   		</p>
+    </form>
+
+   	<form action="/text_file_counter" method="POST" enctype="multipart/form-data">
+   		<p>
+   			<label>Text file:</label>
+   			<input type="file" name="txt_file"/>
+		</p>
+		<p>
+	   		<input type="submit" value="Count Words!">
+   		</p>
+    </form>
+</body>
+</html>
+
+
+
+
