@@ -1,0 +1,38 @@
+<html>
+<head>
+	<title>Online todo list</title>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+<body>
+	<p>
+		<form action="/add_item" method="POST">
+			<input type="text" name="task" placeholder="Enter a task"/>
+			<input type="text" name="delay" placeholder="Due in # days"/>
+			<input type="submit" value="Add Task" class="submit_button"/>
+		</form>
+	</p>
+	<p>
+		<h2>Open tasks, sorted by urgency and due date</h2>
+	</p>
+	<table>
+		<% @sortedItems.each do |obj| %>
+			<tr>
+				<td><%= obj[:due]   %> </td>
+				<td><%= obj[:task]  %> </td>
+				<td><%= obj[:prio]  %> </td>
+				<td>
+<%=					"<form action='/del_item/#{obj[:id]}' method='POST'>"		%>
+						<input type="submit" value="Done!" class="submit_button"/>
+					</form>
+				</td>
+			</tr>
+		<%  end %>
+
+	</table>
+
+</body>
+</html>
+
+
+
+
