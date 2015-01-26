@@ -15,18 +15,30 @@
 		<h2>Open tasks, sorted by urgency and due date</h2>
 	</p>
 	<table>
-		<% @sortedItems.each do |obj| %>
+		<tr>
+			<th>Added</th>
+			<th>Due</th>
+			<th>Task</th>
+			<th>Prio</th>
+			<th>Done</th>
+			<th> </th>
+		</tr>
+<% 		@sortedItems.each do |obj| %>
 			<tr>
+				<td><%= obj[:added] %> </td>
 				<td><%= obj[:due]   %> </td>
 				<td><%= obj[:task]  %> </td>
 				<td><%= obj[:prio]  %> </td>
+				<td><%= obj[:done]  %> </td>
 				<td>
-<%=					"<form action='/del_item/#{obj[:id]}' method='POST'>"		%>
-						<input type="submit" value="Done!" class="submit_button"/>
+					<form action='/del_item' method='POST'>		 	
+<%=						"<input type='hidden' value='#{obj[:done]}' name='done'>" 			%>
+<%=						"<input type='hidden' value='#{obj[:id]}'   name='id'>" 			%>
+<%=						"<input type='submit' value='#{obj[:done]==:true ? :Delete : :Done!}' class='submit_button'/>" 	%>
 					</form>
 				</td>
 			</tr>
-		<%  end %>
+<%  	end %>
 
 	</table>
 
