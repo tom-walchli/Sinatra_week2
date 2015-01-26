@@ -8,7 +8,6 @@ enable :logging
 
 logger = Logger.new("logs/dev.log")
 logger.info("Sinatra started...")
-#binding.pry
 
 def log(msg)
 	logger.info msg
@@ -17,11 +16,8 @@ end
 
 $todoStore 	 = PStore.new("public/todo_s.pstore")
 
-#binding.pry
-
 get '/' do 
-	@sortedItems = readAll
-#	@sortedItems = sort(readAll)
+	@sortedItems = sort(readAll)
 	p @sortedItems
 	p "Sorted Item length: #{@sortedItems.length}"
 	erb :todo_list
@@ -32,34 +28,46 @@ post '/add_item' do
 	redirect '/'
 end
 
-post '/del_item/:id' do
-	delItem(params[:id])
+post '/del_item' do
+	case params[:done].to_s
+	when "true"
+		delItem(params[:id])
+	when "false"
+		updateItem(params[:id])
+	end
 	redirect '/'
 end
 
 def addItem(task,delay)
-	prio   	= task.downcase.include?("urgent")
-	due		= Time.new + (3600 * 24 * delay.to_i)
+	prio   	= task.downcase.include?("urgent") ? 0 : 1
+	added	= Time.new
+	due		= convertTime(added + (3600 * 24 * delay.to_f))
+	added	= convertTime(added)
 	$todoStore.transaction do
 		id = $todoStore.roots ? $todoStore.roots.length + 1 : 0
-		$todoStore[id] = {:id=>id,:task=>task,:prio=>prio,:due=>due}
+		$todoStore[id] = {:id=>id,:task=>task,:prio=>prio,:due=>due,:added=>added,:done=>:false}
 	end
-#	td = Todo.new(task,delay,@numElements)
+end
+
+def updateItem(id)
+	$todoStore.transaction do 
+		$todoStore[id.to_i][:done] = :true
+	end
+end
+
+def convertTime(t)
+	return t.strftime("%Y-%m-%d %H:%M:%S")
 end
 
 def delItem(id)
 	puts "Hello, I'm your delete routine. ID = #{id}"
-	$todoStore.transaction do  # begin read-only transaction, no changes allowed
+	$todoStore.transaction do  
 		$todoStore.delete(id.to_i)
 	end
 end
 
 def sort(allItems)
-	sortedItems = allItems.sort do |o,p|   
-		comp = o[:prio] <=> p[:prio]
-		comp.zero? ? (p[:due] <=> o[:due]) : comp
-	end
-	return sortedItems
+	return allItems.sort_by{|e| [e[:prio], e[:due]]}
 end
 
 def readAll
@@ -69,26 +77,4 @@ def readAll
 	end
   	return allItems
 end
-
-# def display(sortedItems)
-# 	puts "Hello123"
-# 	sortedItems.each {|item| puts item}
-# end
-
-# class Todo
-# #	attr_reader :id, :task, :due, :prio
-# #	@@id = sortedItems.length
-# 	def initialize(task,delay,id)
-# 		p "\n\n\nID:   #{id}\n\n\n"
-# 		@id		= id
-# 		@task   = task
-# 		@prio   = task.downcase.include?("urgent")
-# 		@due	= Time.new + (3600 * 24 * delay.to_i)
-# 		$todoStore.transaction do
-# 			$todoStore[@id] = self
-# 		end
-# 	end
-# end
-
-
 
